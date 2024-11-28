@@ -3,13 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Encryptar e Descriptar</title>
+    <title>My Secret</title>
     <script>
       async function deriveKey(secretKey) {
         const encoder = new TextEncoder();
         const keyMaterial = encoder.encode(secretKey);
 
-        // Gerando uma chave válida com SHA-256 (256 bits)
         const hash = await crypto.subtle.digest("SHA-256", keyMaterial);
 
         return crypto.subtle.importKey("raw", hash, "AES-GCM", false, [
@@ -20,7 +19,6 @@
 
       async function encryptString(secretKey, text) {
         const key = await deriveKey(secretKey);
-        const iv = crypto.getRandomValues(new Uint8Array(12)); // Vetor de inicialização (IV)
         const encoder = new TextEncoder();
         const encrypted = await crypto.subtle.encrypt(
           { name: "AES-GCM", iv: iv },
@@ -28,7 +26,6 @@
           encoder.encode(text)
         );
 
-        // Concatenando IV e texto criptografado
         return btoa(
           String.fromCharCode(...iv) +
             String.fromCharCode(...new Uint8Array(encrypted))
@@ -39,7 +36,6 @@
         const key = await deriveKey(secretKey);
         const encodedData = atob(encryptedBase64);
 
-        // Separando IV e texto cifrado
         const iv = new Uint8Array(
           [...encodedData].slice(0, 12).map((char) => char.charCodeAt(0))
         );
@@ -60,7 +56,7 @@
         const secretKey = document.getElementById("secret").value;
         const message = document.getElementById("message").value;
         if (!secretKey || !message) {
-          alert("Por favor, preencha o segredo e a mensagem.");
+          alert("Fill in the secret and the message (input)");
           return;
         }
         const encrypted = await encryptString(secretKey, message);
@@ -71,35 +67,31 @@
         const secretKey = document.getElementById("secret").value;
         const encryptedMessage = document.getElementById("message").value;
         if (!secretKey || !encryptedMessage) {
-          alert("Por favor, preencha o segredo e a mensagem criptografada.");
+          alert("Fill in the secret and the message (input)");
           return;
         }
         try {
           const decrypted = await decryptString(secretKey, encryptedMessage);
           document.getElementById("output").value = decrypted;
         } catch (error) {
-          alert("Falha na descriptografia. Verifique o segredo ou a mensagem.");
+          alert("Fail. Check the secret");
         }
       }
     </script>
   </head>
   <body>
-    <h1>Encryptar e Descriptar String</h1>
-    <label for="secret">Segredo:</label><br />
+    <h1>Encrypt & Decrypt</h1>
+    <label for="secret">Secret:</label><br />
     <input type="password" id="secret" /><br /><br />
-    <label for="message">Mensagem:</label><br />
+    <label for="message">Input/Message:</label><br />
     <textarea
       id="message"
-      placeholder="Digite a mensagem ou mensagem criptografada"
+      placeholder="Input (Encrypted or to Encrypt)"
     ></textarea
     ><br /><br />
-    <button onclick="handleEncrypt()">Encryptar</button>
-    <button onclick="handleDecrypt()">Descriptar</button><br /><br />
-    <label for="output">Resultado:</label><br />
-    <textarea
-      id="output"
-      readonly
-      placeholder="O resultado aparecerá aqui"
-    ></textarea>
+    <button onclick="handleEncrypt()">Encrypt</button>
+    <button onclick="handleDecrypt()">Decrypt</button><br /><br />
+    <label for="output">Result:</label><br />
+    <textarea id="output" readonly placeholder="Result goes here"></textarea>
   </body>
 </html>
