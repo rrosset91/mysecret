@@ -19,6 +19,7 @@
 
       async function encryptString(secretKey, text) {
         const key = await deriveKey(secretKey);
+        const iv = crypto.getRandomValues(new Uint8Array(12));
         const encoder = new TextEncoder();
         const encrypted = await crypto.subtle.encrypt(
           { name: "AES-GCM", iv: iv },
@@ -35,6 +36,7 @@
       async function decryptString(secretKey, encryptedBase64) {
         const key = await deriveKey(secretKey);
         const encodedData = atob(encryptedBase64);
+        const iv = crypto.getRandomValues(new Uint8Array(12));
 
         const iv = new Uint8Array(
           [...encodedData].slice(0, 12).map((char) => char.charCodeAt(0))
