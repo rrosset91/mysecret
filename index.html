@@ -51,30 +51,35 @@
             return new TextDecoder().decode(decrypted);
         }
 
-        function separateWords() {
-            const output = document.getElementById('output').value.trim();
-            const words = output.split(' ');
-            const evenWords = words.filter((_, index) => (index + 1) % 2 === 0);
-            const oddWords = words.filter((_, index) => (index + 1) % 2 !== 0);
+       unction separateWords() {
+        const output = document.getElementById('output').value.trim();
+        const words = output.split(' ');
 
-            document.getElementById('output').value = [...evenWords, ...oddWords].join(' ');
+        // Separar em pares e ímpares
+        const evenWords = words.filter((_, index) => (index + 1) % 2 === 0);
+        const oddWords = words.filter((_, index) => (index + 1) % 2 !== 0);
+
+        // Combinar na nova ordem: pares primeiro, depois ímpares
+        document.getElementById('output').value = [...evenWords, ...oddWords].join(' ');
+    }
+
+    function restoreOrder() {
+        const output = document.getElementById('output').value.trim();
+        const words = output.split(' ');
+
+        // Dividir em pares e ímpares novamente
+        const evenWords = words.slice(0, Math.floor(words.length / 2));
+        const oddWords = words.slice(Math.floor(words.length / 2));
+
+        // Restaurar para ordem original: ímpar-par alternados
+        const restored = [];
+        for (let i = 0; i < oddWords.length; i++) {
+            if (oddWords[i]) restored.push(oddWords[i]); // Adicionar palavra ímpar
+            if (evenWords[i]) restored.push(evenWords[i]); // Adicionar palavra par
         }
 
-        function restoreOrder() {
-            const output = document.getElementById('output').value.trim();
-            const words = output.split(' ');
-
-            const evenWords = words.slice(0, words.length / 2);
-            const oddWords = words.slice(words.length / 2);
-
-            const restored = [];
-            for (let i = 0; i < oddWords.length; i++) {
-                if (evenWords[i]) restored.push(evenWords[i]);
-                restored.push(oddWords[i]);
-            }
-
-            document.getElementById('output').value = restored.join(' ');
-        }
+        document.getElementById('output').value = restored.join(' ');
+    }
 
         async function handleEncrypt() {
             encryptClickCount++;
@@ -120,7 +125,7 @@
 <body>
     <h1>Encrypt and Decrypt Strings</h1>
     <label for="secret">Secret:</label><br>
-    <input type="text" id="secret" placeholder="Enter the secret"><br><br>
+    <input type="password" id="secret" placeholder="Enter the secret"><br><br>
     <label for="message">Message:</label><br>
     <textarea id="message" placeholder="Enter the message or encrypted text"></textarea><br><br>
     <button onclick="handleEncrypt()">Encrypt</button>
