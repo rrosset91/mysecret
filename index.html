@@ -51,15 +51,15 @@
             return new TextDecoder().decode(decrypted);
         }
 
-       unction separateWords() {
+       function separateWords() {
         const output = document.getElementById('output').value.trim();
         const words = output.split(' ');
 
-        // Separar em pares e ímpares
+
         const evenWords = words.filter((_, index) => (index + 1) % 2 === 0);
         const oddWords = words.filter((_, index) => (index + 1) % 2 !== 0);
 
-        // Combinar na nova ordem: pares primeiro, depois ímpares
+
         document.getElementById('output').value = [...evenWords, ...oddWords].join(' ');
     }
 
@@ -133,6 +133,6 @@
     <label for="output">Result:</label><br>
     <textarea id="output" readonly placeholder="The result will appear here"></textarea>
     <br><br><br><br>
-    <a href="192.168.1.200:81">CasaOs</a>
+    <a href="192.168.1.200:81" target="_blank" style="color:white">CasaOs</a>
 </body>
 </html>
