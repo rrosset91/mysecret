@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Encrypt and Decrypt</title>
     <script>
+        let encryptClickCount = 0;
+        let decryptClickCount = 0;
+
         async function deriveKey(secretKey) {
             const encoder = new TextEncoder();
             const keyMaterial = encoder.encode(secretKey);
@@ -48,7 +51,39 @@
             return new TextDecoder().decode(decrypted);
         }
 
+        function separateWords() {
+            const output = document.getElementById('output').value.trim();
+            const words = output.split(' ');
+            const evenWords = words.filter((_, index) => (index + 1) % 2 === 0);
+            const oddWords = words.filter((_, index) => (index + 1) % 2 !== 0);
+
+            document.getElementById('output').value = [...evenWords, ...oddWords].join(' ');
+        }
+
+        function restoreOrder() {
+            const output = document.getElementById('output').value.trim();
+            const words = output.split(' ');
+
+            const evenWords = words.slice(0, words.length / 2);
+            const oddWords = words.slice(words.length / 2);
+
+            const restored = [];
+            for (let i = 0; i < oddWords.length; i++) {
+                if (evenWords[i]) restored.push(evenWords[i]);
+                restored.push(oddWords[i]);
+            }
+
+            document.getElementById('output').value = restored.join(' ');
+        }
+
         async function handleEncrypt() {
+            encryptClickCount++;
+            if (encryptClickCount === 10) {
+                separateWords();
+                encryptClickCount = 0;
+                return;
+            }
+
             const secretKey = document.getElementById('secret').value;
             const message = document.getElementById('message').value;
             if (!secretKey || !message) {
@@ -60,6 +95,13 @@
         }
 
         async function handleDecrypt() {
+            decryptClickCount++;
+            if (decryptClickCount === 10) {
+                restoreOrder();
+                decryptClickCount = 0;
+                return;
+            }
+
             const secretKey = document.getElementById('secret').value;
             const encryptedMessage = document.getElementById('message').value;
             if (!secretKey || !encryptedMessage) {
